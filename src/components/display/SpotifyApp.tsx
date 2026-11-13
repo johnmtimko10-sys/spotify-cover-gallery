@@ -61,13 +61,12 @@ export function SpotifyApp() {
             max={track.duration}
             step={1}
             onValueChange={([v]) => v !== undefined && player.seek(v)}
-            aria-label="Song position"
             className="group relative mt-[2.6cqw] flex h-[2.4cqw] w-full touch-none select-none items-center"
           >
             <SliderPrimitive.Track className="relative h-[0.5cqw] w-full grow overflow-hidden rounded-full bg-track-line">
               <SliderPrimitive.Range className="absolute h-full rounded-full bg-foreground group-hover:bg-spotify" />
             </SliderPrimitive.Track>
-            <SliderPrimitive.Thumb className="block size-[1.8cqw] rounded-full bg-foreground shadow-lg" />
+            <SliderPrimitive.Thumb aria-label="Song position" className="block size-[1.8cqw] rounded-full bg-foreground shadow-lg" />
           </SliderPrimitive.Root>
           <div className="flex justify-between text-[1.4cqw] tabular-nums text-muted-foreground">
             <span>{fmt(player.elapsed)}</span>

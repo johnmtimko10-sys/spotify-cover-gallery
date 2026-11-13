@@ -33,7 +33,6 @@ function GlowSlider({
       min={min}
       step={1}
       disabled={disabled}
-      aria-label={label}
       className="relative flex h-[4.4cqw] w-full touch-none select-none items-center data-[disabled]:opacity-40"
     >
       <SliderPrimitive.Track
@@ -41,7 +40,7 @@ function GlowSlider({
         style={trackStyle}
       >
       </SliderPrimitive.Track>
-      <SliderPrimitive.Thumb className="slider-thumb block size-[3.6cqw] cursor-grab rounded-full active:cursor-grabbing" />
+      <SliderPrimitive.Thumb aria-label={label} className="slider-thumb block size-[3.6cqw] cursor-grab rounded-full active:cursor-grabbing" />
     </SliderPrimitive.Root>
   );
 }
