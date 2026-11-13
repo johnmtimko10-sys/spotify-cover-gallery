@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LightsRouteImport } from './routes/lights'
+import { Route as PhotosRouteImport } from './routes/photos'
 import { Route as SpotifyRouteImport } from './routes/spotify'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const LightsRoute = LightsRouteImport.update({
   path: '/lights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PhotosRoute = PhotosRouteImport.update({
+  id: '/photos',
+  path: '/photos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SpotifyRoute = SpotifyRouteImport.update({
   id: '/spotify',
   path: '/spotify',
@@ -32,30 +38,34 @@ const SpotifyRoute = SpotifyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/lights': typeof LightsRoute
+  '/photos': typeof PhotosRoute
   '/spotify': typeof SpotifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/lights': typeof LightsRoute
+  '/photos': typeof PhotosRoute
   '/spotify': typeof SpotifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/lights': typeof LightsRoute
+  '/photos': typeof PhotosRoute
   '/spotify': typeof SpotifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/lights' | '/spotify'
+  fullPaths: '/' | '/lights' | '/photos' | '/spotify'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/lights' | '/spotify'
-  id: '__root__' | '/' | '/lights' | '/spotify'
+  to: '/' | '/lights' | '/photos' | '/spotify'
+  id: '__root__' | '/' | '/lights' | '/photos' | '/spotify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LightsRoute: typeof LightsRoute
+  PhotosRoute: typeof PhotosRoute
   SpotifyRoute: typeof SpotifyRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/photos': {
+      id: '/photos'
+      path: '/photos'
+      fullPath: '/photos'
+      preLoaderRoute: typeof PhotosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/spotify': {
       id: '/spotify'
       path: '/spotify'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LightsRoute: LightsRoute,
+  PhotosRoute: PhotosRoute,
   SpotifyRoute: SpotifyRoute,
 }
 export const routeTree = rootRouteImport
