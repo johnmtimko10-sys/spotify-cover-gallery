@@ -184,3 +184,99 @@
   animation: wave-drift 14s ease-in-out infinite;
   transform-origin: bottom;
 }
+
+@utility tile-light {
+  --lc: var(--light, var(--glow-green));
+  border: 3px solid var(--glow-green);
+  box-shadow:
+    0 0 18px color-mix(in oklab, var(--glow-green) 70%, transparent),
+    0 0 60px color-mix(in oklab, var(--lc) calc(var(--light-strength, 50%) * 0.4), transparent),
+    inset 0 0 24px color-mix(in oklab, var(--glow-green) 20%, transparent);
+  background:
+    radial-gradient(70% 60% at 50% 35%, color-mix(in oklab, var(--lc) calc(var(--light-strength, 50%) * 0.35), transparent), transparent 70%),
+    var(--tile);
+}
+
+@utility panel {
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--tile) 80%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+@utility panel-purple {
+  border: 2px solid color-mix(in oklab, var(--glow-purple) 70%, transparent);
+  box-shadow: 0 0 30px color-mix(in oklab, var(--glow-purple) 25%, transparent);
+  background: color-mix(in oklab, var(--tile) 85%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+@utility dock {
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--tile) 75%, transparent);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 40px -10px color-mix(in oklab, var(--background) 90%, transparent);
+}
+
+@utility hue-track {
+  background: linear-gradient(
+    to right,
+    oklch(0.78 0.18 0),
+    oklch(0.78 0.18 60),
+    oklch(0.78 0.18 120),
+    oklch(0.78 0.18 180),
+    oklch(0.78 0.18 240),
+    oklch(0.78 0.18 300),
+    oklch(0.78 0.18 360)
+  );
+}
+
+@utility slider-thumb {
+  background: var(--foreground);
+  border: 3px solid var(--background);
+  box-shadow: 0 0 0 1px var(--border), 0 4px 14px color-mix(in oklab, var(--background) 70%, transparent);
+  outline: none;
+  &:focus-visible {
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+}
+
+@utility swatch {
+  background: var(--swatch);
+  box-shadow: 0 0 14px color-mix(in oklab, var(--swatch) 45%, transparent);
+}
+
+@utility swatch-active {
+  outline: 3px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+@utility play-button {
+  box-shadow: 0 0 30px color-mix(in oklab, var(--spotify) 45%, transparent);
+}
+
+@keyframes eq {
+  0%, 100% { height: 30%; }
+  50% { height: 100%; }
+}
+
+@utility eq-bar {
+  animation: eq 0.9s ease-in-out infinite;
+}
+
+@keyframes app-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+@utility app-enter {
+  animation: app-enter 0.35s ease-out;
+}
+
+@keyframes cover-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@utility cover-in {
+  animation: cover-in 0.4s ease-out;
+}

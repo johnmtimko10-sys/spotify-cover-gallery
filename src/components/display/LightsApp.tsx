@@ -13,6 +13,8 @@ function GlowSlider({
   trackClassName = "",
   label,
   disabled,
+  min = 1,
+  max = 100,
 }: {
   value: number;
   onChange: (v: number) => void;
@@ -20,14 +22,15 @@ function GlowSlider({
   trackClassName?: string;
   label: string;
   disabled?: boolean;
+  min?: number;
   max?: number;
 }) {
   return (
     <SliderPrimitive.Root
       value={[value]}
       onValueChange={([v]) => onChange(v ?? value)}
-      max={label === "Hue" ? 360 : 100}
-      min={label === "Hue" ? 0 : 1}
+      max={max}
+      min={min}
       step={1}
       disabled={disabled}
       aria-label={label}
@@ -37,7 +40,6 @@ function GlowSlider({
         className={`relative h-[2.4cqw] w-full grow overflow-hidden rounded-full border border-border ${trackClassName}`}
         style={trackStyle}
       >
-        {label !== "Hue" && <SliderPrimitive.Range className="absolute h-full rounded-full bg-transparent" />}
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb className="slider-thumb block size-[3.6cqw] cursor-grab rounded-full active:cursor-grabbing" />
     </SliderPrimitive.Root>
@@ -129,7 +131,9 @@ export function LightsApp() {
             </div>
             <GlowSlider
               label="Hue"
-              value={lights.color.name === "Custom" ? lights.color.h : lights.color.h}
+              value={lights.color.h}
+              min={0}
+              max={360}
               onChange={(h) => {
                 lights.setColor(fromHue(h));
                 if (!lights.on) lights.setOn(true);
