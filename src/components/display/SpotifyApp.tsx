@@ -50,7 +50,7 @@ export function SpotifyApp() {
             <SpotifyLogo className="w-[2.2cqw]" />
             Now playing
           </div>
-          <h1 className="mt-[1.4cqw] truncate text-[4.4cqw] font-bold leading-none tracking-tight text-foreground">
+          <h1 className="mt-[1.4cqw] line-clamp-2 text-[3.8cqw] font-bold leading-[1.05] tracking-tight text-foreground">
             {track.title}
           </h1>
           <p className="mt-[0.8cqw] truncate text-[2.2cqw] text-foreground/85">{track.artist}</p>
