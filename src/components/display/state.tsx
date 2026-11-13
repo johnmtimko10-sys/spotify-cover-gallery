@@ -1,6 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { TRACKS } from "./tracks";
 import { LIGHT_PRESETS, type LightColor } from "./lights";
+import { deletePhotoRecord, loadPhotoRecords, onlyImages, savePhotoRecord, type Photo } from "./photos";
 
 type DisplayState = {
   lights: {
@@ -25,6 +26,12 @@ type DisplayState = {
     setShuffle: (v: boolean) => void;
     setRepeat: (v: boolean) => void;
   };
+  photos: {
+    items: Photo[];
+    /** Adds the pictures/GIFs among `files` and returns their new ids. */
+    add: (files: Iterable<File>) => string[];
+    remove: (id: string) => void;
+  };
 };
 
 const Ctx = createContext<DisplayState | null>(null);
@@ -39,6 +46,46 @@ export function DisplayProvider({ children }: { children: ReactNode }) {
   const [elapsed, setElapsed] = useState(48);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState(false);
+
+  const [photoItems, setPhotoItems] = useState<Photo[]>([]);
+  const photoRef = useRef(photoItems);
+  photoRef.current = photoItems;
+
+  // Saved photos live in the browser so they survive a reload.
+  useEffect(() => {
+    let cancelled = false;
+    loadPhotoRecords()
+      .then((recs) => {
+        if (cancelled) return;
+        const loaded = recs.map((r) => ({ id: r.id, name: r.name, url: URL.createObjectURL(r.blob) }));
+        setPhotoItems((cur) => [...loaded, ...cur.filter((c) => !loaded.some((l) => l.id === c.id))]);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const addPhotos = useCallback((files: Iterable<File>) => {
+    const now = Date.now();
+    const added = onlyImages(files).map((file, i) => ({
+      id: crypto.randomUUID(),
+      name: file.name,
+      url: URL.createObjectURL(file),
+      file,
+      createdAt: now + i,
+    }));
+    setPhotoItems((cur) => [...cur, ...added.map(({ id, name, url }) => ({ id, name, url }))]);
+    for (const a of added) savePhotoRecord({ id: a.id, name: a.name, blob: a.file, createdAt: a.createdAt }).catch(() => {});
+    return added.map((a) => a.id);
+  }, []);
+
+  const removePhoto = useCallback((id: string) => {
+    const hit = photoRef.current.find((p) => p.id === id);
+    if (hit) URL.revokeObjectURL(hit.url);
+    setPhotoItems((cur) => cur.filter((p) => p.id !== id));
+    deletePhotoRecord(id).catch(() => {});
+  }, []);
 
   const pickNext = useCallback(
     (i: number) => {
@@ -94,8 +141,9 @@ export function DisplayProvider({ children }: { children: ReactNode }) {
         setShuffle,
         setRepeat,
       },
+      photos: { items: photoItems, add: addPhotos, remove: removePhoto },
     }),
-    [on, brightness, color, playing, index, elapsed, shuffle, repeat, pickNext, duration],
+    [on, brightness, color, playing, index, elapsed, shuffle, repeat, pickNext, duration, photoItems, addPhotos, removePhoto],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

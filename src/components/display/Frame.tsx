@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutGrid, Lightbulb, Wifi } from "lucide-react";
+import { ArrowLeft, Images, LayoutGrid, Lightbulb, Wifi } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { SpotifyLogo } from "./icons";
 
@@ -109,19 +109,57 @@ function Dock() {
           <SpotifyLogo className="w-[2.2cqw]" />
           Spotify
         </Link>
+        <Link
+          to="/photos"
+          className={tabBase}
+          activeProps={{ className: "bg-foreground/15 text-foreground" }}
+          inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
+        >
+          <Images className="h-auto w-[2.2cqw]" />
+          Photos
+        </Link>
       </div>
     </nav>
   );
 }
 
-export function Frame({ children, title }: { children: ReactNode; title?: string }) {
+/** Small round back arrow pinned to the top-left of the display. */
+export function BackButton({ onClick, label = "Back", hidden = false }: { onClick: () => void; label?: string; hidden?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      aria-label={label}
+      className={`absolute left-[2cqw] top-[2cqw] z-30 grid size-[4.8cqw] place-items-center rounded-full border border-border bg-background/50 text-foreground backdrop-blur-md transition-all duration-300 hover:bg-background/75 active:scale-95 ${
+        hidden ? "pointer-events-none opacity-0" : "opacity-100"
+      }`}
+    >
+      <ArrowLeft className="h-auto w-[2.6cqw]" strokeWidth={2.6} />
+    </button>
+  );
+}
+
+/**
+ * The display surface. `bare` drops the status bar, waves and tab bar so the
+ * content can take up the entire screen (full-screen photos, album-cover mode).
+ */
+export function Frame({ children, title, bare = false }: { children: ReactNode; title?: string; bare?: boolean }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="relative aspect-[1320/750] w-[min(100vw,calc(100vh*1.76))] overflow-hidden display-bg font-sans [container-type:inline-size]">
-        <BackgroundWaves />
-        <StatusBar title={title} />
-        <div className="app-enter relative z-10">{children}</div>
-        <Dock />
+        {bare ? (
+          <div className="app-enter absolute inset-0 z-10">{children}</div>
+        ) : (
+          <>
+            <BackgroundWaves />
+            <StatusBar title={title} />
+            <div className="app-enter relative z-10">{children}</div>
+            <Dock />
+          </>
+        )}
       </div>
     </div>
   );
