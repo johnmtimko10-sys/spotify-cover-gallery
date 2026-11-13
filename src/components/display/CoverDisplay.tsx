@@ -51,6 +51,8 @@ function StatusBar() {
 }
 
 function BackgroundWaves() {
+  const green = { stopColor: "var(--glow-green)" };
+  const purple = { stopColor: "var(--glow-purple)" };
   return (
     <svg
       className="pointer-events-none absolute inset-0 h-full w-full"
@@ -58,24 +60,40 @@ function BackgroundWaves() {
       preserveAspectRatio="none"
       aria-hidden
     >
+      <defs>
+        <linearGradient id="bg-green" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" style={{ ...green, stopOpacity: 0.28 }} />
+          <stop offset="0.6" style={{ ...green, stopOpacity: 0.05 }} />
+          <stop offset="1" style={{ ...green, stopOpacity: 0 }} />
+        </linearGradient>
+        <linearGradient id="bg-purple" x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0" style={{ ...purple, stopOpacity: 0.55 }} />
+          <stop offset="0.5" style={{ ...purple, stopOpacity: 0.12 }} />
+          <stop offset="1" style={{ ...purple, stopOpacity: 0 }} />
+        </linearGradient>
+        <filter id="bg-blur">
+          <feGaussianBlur stdDeviation="6" />
+        </filter>
+      </defs>
       <g className="wave-drift">
         <path
-          d="M0 110 C 220 90, 260 300, 600 330 S 1000 300, 1320 360 L1320 750 L0 750 Z"
-          className="fill-glow-green/10"
+          d="M-150 120 C 100 60, 260 330, 620 340 S 1100 330, 1500 420 L1500 900 L-150 900 Z"
+          fill="url(#bg-green)"
         />
         <path
-          d="M0 420 C 200 300, 420 330, 700 360 S 1100 380, 1320 300 L1320 750 L0 750 Z"
-          className="fill-glow-green/10"
+          d="M-150 450 C 150 330, 420 340, 720 370 S 1150 400, 1500 330 L1500 900 L-150 900 Z"
+          fill="url(#bg-green)"
+          opacity="0.7"
         />
       </g>
-      <g className="wave-drift" style={{ animationDelay: "-7s" }}>
+      <g className="wave-drift" style={{ animationDelay: "-7s" }} filter="url(#bg-blur)">
+        <path d="M520 900 C 820 700, 1080 380, 1500 120 L1500 900 Z" fill="url(#bg-purple)" opacity="0.6" />
+        <path d="M760 900 C 980 690, 1160 520, 1500 360 L1500 900 Z" fill="url(#bg-purple)" />
         <path
-          d="M700 750 C 900 600, 1100 500, 1320 380 L1320 750 Z"
-          className="fill-glow-purple/25"
-        />
-        <path
-          d="M500 750 C 800 640, 1050 360, 1320 160 L1320 750 Z"
-          className="fill-glow-purple/10"
+          d="M760 900 C 980 690, 1160 520, 1500 360"
+          fill="none"
+          strokeWidth="4"
+          className="stroke-glow-purple/60"
         />
       </g>
     </svg>
@@ -122,7 +140,7 @@ function BulbIcon({ on }: { on: boolean }) {
 
 function SpotifyLogo() {
   return (
-    <svg viewBox="0 0 168 168" className="w-[11.5cqw]" aria-label="Spotify">
+    <svg viewBox="-2 -2 172 172" className="w-[11.5cqw] overflow-visible" aria-label="Spotify">
       <circle cx="84" cy="84" r="84" className="fill-spotify" />
       <g fill="none" strokeLinecap="round" className="stroke-spotify-foreground">
         <path d="M36 62c32-10 70-8 98 8" strokeWidth="14" />
