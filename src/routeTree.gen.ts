@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LightsRouteImport } from './routes/lights'
+import { Route as SpotifyRouteImport } from './routes/spotify'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LightsRoute = LightsRouteImport.update({
+  id: '/lights',
+  path: '/lights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SpotifyRoute = SpotifyRouteImport.update({
+  id: '/spotify',
+  path: '/spotify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/lights': typeof LightsRoute
+  '/spotify': typeof SpotifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/lights': typeof LightsRoute
+  '/spotify': typeof SpotifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/lights': typeof LightsRoute
+  '/spotify': typeof SpotifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/lights' | '/spotify'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/lights' | '/spotify'
+  id: '__root__' | '/' | '/lights' | '/spotify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LightsRoute: typeof LightsRoute
+  SpotifyRoute: typeof SpotifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lights': {
+      id: '/lights'
+      path: '/lights'
+      fullPath: '/lights'
+      preLoaderRoute: typeof LightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/spotify': {
+      id: '/spotify'
+      path: '/spotify'
+      fullPath: '/spotify'
+      preLoaderRoute: typeof SpotifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LightsRoute: LightsRoute,
+  SpotifyRoute: SpotifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
