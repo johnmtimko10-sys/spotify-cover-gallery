@@ -1,3 +1,4 @@
+import { Wifi } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type Track = { title: string; artist: string; duration: number };
@@ -36,12 +37,7 @@ function StatusBar() {
         <span className="text-[1.9cqw] text-muted-foreground">{date}</span>
       </div>
       <div className="flex items-center gap-[4cqw]">
-        <svg viewBox="0 0 24 24" className="w-[3.4cqw] fill-foreground" aria-label="Wi-Fi">
-          <path d="M12 20.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-          <path d="M12 12.5c-2 0-3.8.8-5.1 2.1l1.8 1.8a4.7 4.7 0 0 1 6.6 0l1.8-1.8A7.2 7.2 0 0 0 12 12.5Z" />
-          <path d="M12 7.5c-3.4 0-6.4 1.4-8.7 3.6l1.8 1.8a9.8 9.8 0 0 1 13.8 0l1.8-1.8A12.4 12.4 0 0 0 12 7.5Z" />
-          <path d="M12 2.5C7.2 2.5 2.9 4.4-.3 7.5l1.8 1.8a14.9 14.9 0 0 1 21 0l1.8-1.8A17.4 17.4 0 0 0 12 2.5Z" transform="translate(0 .5) scale(.97) translate(.37 0)" />
-        </svg>
+        <Wifi className="h-auto w-[3.4cqw] text-foreground" strokeWidth={3} aria-label="Wi-Fi" />
         <div className="flex items-center gap-[0.8cqw]">
           <div className="relative flex h-[1.9cqw] w-[3.4cqw] items-center rounded-[0.45cqw] border-[0.2cqw] border-foreground p-[0.2cqw]">
             <div className="h-full w-[78%] rounded-[0.2cqw] bg-glow-green" />
