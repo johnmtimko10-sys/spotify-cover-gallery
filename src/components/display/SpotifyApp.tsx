@@ -1,6 +1,7 @@
 import * as SliderPrimitive from "@radix-ui/react-slider";
-import { Repeat, Shuffle } from "lucide-react";
-import { Frame } from "./Frame";
+import { Expand, Repeat, Shuffle, ZoomIn } from "lucide-react";
+import { useEffect, useState } from "react";
+import { BackButton, Frame } from "./Frame";
 import { NextIcon, PlayPauseIcon, PrevIcon, SpotifyLogo } from "./icons";
 import { useDisplay } from "./state";
 import { TRACKS, fmt } from "./tracks";
@@ -19,7 +20,100 @@ function Equalizer({ playing }: { playing: boolean }) {
   );
 }
 
+type View = "main" | "zoom" | "cover";
+
+function CoverBackdrop({ src }: { src: string }) {
+  return (
+    <>
+      <img src={src} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-110 object-cover opacity-45 blur-3xl" />
+      <div className="absolute inset-0 bg-background/40" />
+    </>
+  );
+}
+
+/** Zoomed-in view: just the album cover and the skip controls, big. */
+function ZoomView({ onBack, onCover }: { onBack: () => void; onCover: () => void }) {
+  const { player } = useDisplay();
+  const track = TRACKS[player.index] ?? TRACKS[0]!;
+  return (
+    <Frame bare>
+      <CoverBackdrop src={track.cover} />
+      <BackButton onClick={onBack} label="Back to Spotify" />
+      <div className="relative flex h-full items-center justify-center gap-[7cqw]">
+        <button
+          type="button"
+          onClick={onCover}
+          aria-label="Show album cover only"
+          className="relative aspect-square h-[44cqw] shrink-0 transition-transform hover:scale-[1.01] active:scale-[0.99]"
+        >
+          <img
+            key={track.cover}
+            src={track.cover}
+            alt={`${track.album} album cover`}
+            width={816}
+            height={816}
+            className="cover-in h-full w-full rounded-[2.4cqw] border border-border object-cover shadow-2xl"
+          />
+        </button>
+        <div className="flex items-center gap-[4cqw] text-foreground">
+          <button type="button" onClick={player.prev} aria-label="Previous track" className="p-[1cqw] transition-transform active:scale-90">
+            <PrevIcon className="w-[6cqw]" />
+          </button>
+          <button
+            type="button"
+            onClick={player.toggle}
+            aria-label={player.playing ? "Pause" : "Play"}
+            className="play-button grid size-[13cqw] place-items-center rounded-full bg-spotify text-spotify-foreground transition-transform hover:scale-105 active:scale-95"
+          >
+            <PlayPauseIcon playing={player.playing} className={`w-[5cqw] ${player.playing ? "" : "translate-x-[0.4cqw]"}`} />
+          </button>
+          <button type="button" onClick={player.next} aria-label="Next track" className="p-[1cqw] transition-transform active:scale-90">
+            <NextIcon className="w-[6cqw]" />
+          </button>
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
+/** Album cover only, filling the screen. */
+function CoverView({ onBack }: { onBack: () => void }) {
+  const { player } = useDisplay();
+  const track = TRACKS[player.index] ?? TRACKS[0]!;
+  return (
+    <Frame bare>
+      <CoverBackdrop src={track.cover} />
+      <div className="relative flex h-full items-center justify-center">
+        <img
+          key={track.cover}
+          src={track.cover}
+          alt={`${track.album} album cover`}
+          width={816}
+          height={816}
+          className="cover-in aspect-square h-full object-cover"
+        />
+      </div>
+      <BackButton onClick={onBack} label="Back to Spotify" />
+    </Frame>
+  );
+}
+
 export function SpotifyApp() {
+  const [view, setView] = useState<View>("main");
+
+  useEffect(() => {
+    if (view === "main") return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setView("main");
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [view]);
+
+  if (view === "zoom") return <ZoomView onBack={() => setView("main")} onCover={() => setView("cover")} />;
+  if (view === "cover") return <CoverView onBack={() => setView("main")} />;
+  return <MainView onZoom={() => setView("zoom")} onCover={() => setView("cover")} />;
+}
+
+function MainView({ onZoom, onCover }: { onZoom: () => void; onCover: () => void }) {
   const { player } = useDisplay();
   const track = TRACKS[player.index] ?? TRACKS[0]!;
 
@@ -27,7 +121,12 @@ export function SpotifyApp() {
     <Frame title="Spotify">
       <main className="mx-auto mt-[3cqw] grid w-[92cqw] grid-cols-[30cqw_1fr_25cqw] items-center gap-[3cqw]">
         {/* Album cover */}
-        <div className="relative aspect-square w-full">
+        <button
+          type="button"
+          onClick={onCover}
+          aria-label="Show album cover only"
+          className="group relative aspect-square w-full transition-transform hover:scale-[1.01] active:scale-[0.99]"
+        >
           <img
             src={track.cover}
             alt=""
@@ -42,13 +141,26 @@ export function SpotifyApp() {
             height={816}
             className="cover-in relative h-full w-full rounded-[2cqw] border border-border object-cover"
           />
-        </div>
+          <span className="absolute bottom-[1.2cqw] right-[1.2cqw] grid size-[3.6cqw] place-items-center rounded-full bg-background/60 text-foreground opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+            <Expand className="h-auto w-[1.8cqw]" />
+          </span>
+        </button>
 
         {/* Now playing */}
         <section className="flex min-w-0 flex-col">
-          <div className="flex items-center gap-[1cqw] text-[1.4cqw] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            <SpotifyLogo className="w-[2.2cqw]" />
-            Now playing
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-[1cqw] text-[1.4cqw] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <SpotifyLogo className="w-[2.2cqw]" />
+              Now playing
+            </div>
+            <button
+              type="button"
+              onClick={onZoom}
+              className="flex items-center gap-[0.6cqw] rounded-full border border-border bg-foreground/5 px-[1.4cqw] py-[0.6cqw] text-[1.4cqw] font-medium text-foreground transition-colors hover:bg-foreground/15"
+            >
+              <ZoomIn className="h-auto w-[1.8cqw]" />
+              Zoom
+            </button>
           </div>
           <h1 className="mt-[1.4cqw] line-clamp-2 text-[3.8cqw] font-bold leading-[1.05] tracking-tight text-foreground">
             {track.title}
