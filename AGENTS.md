@@ -31,5 +31,6 @@ use the editor.
 
 ## Project rules
 - Display apps (home, /lights, /spotify, /photos) each render inside `components/display/Frame`; shared light, playback and photo state lives in `DisplayProvider` mounted in `__root` so music keeps playing and settings persist when switching apps.
-- Full-screen views (photo viewer, Spotify zoom/cover-only) use `Frame bare` plus `BackButton` instead of separate routes, so the tab bar and status bar stay out of the way.
+- Navigation is a home screen of app icons (`HomeScreen`); every other app returns via the home arrow in `Frame`'s status bar. There is no bottom tab bar.
+- Full-screen views (photo viewer, Spotify zoom/cover-only) use `Frame bare` plus `BackButton` instead of separate routes, so the status bar stays out of the way.
 - Dropped photos are stored as blobs in browser IndexedDB (`display/photos.ts`) so they survive reloads without needing a backend.

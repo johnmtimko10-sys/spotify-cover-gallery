@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Images, LayoutGrid, Lightbulb, Wifi } from "lucide-react";
+import { ArrowLeft, ChevronLeft, Wifi } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
-import { SpotifyLogo } from "./icons";
 
 function useClock() {
   const [now, setNow] = useState<Date | null>(null);
@@ -13,7 +12,7 @@ function useClock() {
   return now;
 }
 
-function StatusBar({ title }: { title?: string | undefined }) {
+function StatusBar({ title, home }: { title?: string | undefined; home: boolean }) {
   const now = useClock();
   const time = now ? now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "7:42 PM";
   const date = now
@@ -23,6 +22,15 @@ function StatusBar({ title }: { title?: string | undefined }) {
   return (
     <header className="relative z-10 flex items-center justify-between px-[2cqw] pt-[2.4cqw]">
       <div className="flex items-center gap-[2.6cqw]">
+        {!home && (
+          <Link
+            to="/"
+            aria-label="Home"
+            className="-mr-[0.8cqw] grid size-[4.4cqw] place-items-center rounded-full border border-border bg-background/50 text-foreground backdrop-blur-md transition-all hover:bg-background/75 active:scale-95"
+          >
+            <ChevronLeft className="h-auto w-[2.6cqw]" strokeWidth={2.6} />
+          </Link>
+        )}
         <span className="text-[2.6cqw] font-semibold tracking-tight text-foreground">{time}</span>
         <span className="h-[2.2cqw] w-px bg-muted-foreground/60" />
         <span className="text-[1.9cqw] text-muted-foreground">{title ?? date}</span>
@@ -74,55 +82,6 @@ function BackgroundWaves() {
   );
 }
 
-const tabBase =
-  "flex h-[4.6cqw] items-center gap-[0.8cqw] rounded-full px-[1.8cqw] text-[1.5cqw] font-medium transition-all duration-300";
-
-function Dock() {
-  return (
-    <nav className="absolute inset-x-0 bottom-[2cqw] z-20 flex justify-center">
-      <div className="dock flex items-center gap-[0.6cqw] rounded-full p-[0.6cqw]">
-        <Link
-          to="/"
-          className={tabBase}
-          activeOptions={{ exact: true }}
-          activeProps={{ className: "bg-foreground/15 text-foreground" }}
-          inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
-        >
-          <LayoutGrid className="h-auto w-[2.2cqw]" />
-          Home
-        </Link>
-        <Link
-          to="/lights"
-          className={tabBase}
-          activeProps={{ className: "bg-glow-green/20 text-glow-green" }}
-          inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
-        >
-          <Lightbulb className="h-auto w-[2.2cqw]" />
-          Lights
-        </Link>
-        <Link
-          to="/spotify"
-          className={tabBase}
-          activeProps={{ className: "bg-glow-purple/25 text-foreground" }}
-          inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
-        >
-          <SpotifyLogo className="w-[2.2cqw]" />
-          Spotify
-        </Link>
-        <Link
-          to="/photos"
-          className={tabBase}
-          activeProps={{ className: "bg-foreground/15 text-foreground" }}
-          inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
-        >
-          <Images className="h-auto w-[2.2cqw]" />
-          Photos
-        </Link>
-      </div>
-    </nav>
-  );
-}
-
 /** Small round back arrow pinned to the top-left of the display. */
 export function BackButton({ onClick, label = "Back", hidden = false }: { onClick: () => void; label?: string; hidden?: boolean }) {
   return (
@@ -145,8 +104,19 @@ export function BackButton({ onClick, label = "Back", hidden = false }: { onClic
 /**
  * The display surface. `bare` drops the status bar, waves and tab bar so the
  * content can take up the entire screen (full-screen photos, album-cover mode).
+ * `home` hides the back-to-home arrow on the home screen itself.
  */
-export function Frame({ children, title, bare = false }: { children: ReactNode; title?: string; bare?: boolean }) {
+export function Frame({
+  children,
+  title,
+  bare = false,
+  home = false,
+}: {
+  children: ReactNode;
+  title?: string;
+  bare?: boolean;
+  home?: boolean;
+}) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="relative aspect-[1320/750] w-[min(100vw,calc(100vh*1.76))] overflow-hidden display-bg font-sans [container-type:inline-size]">
@@ -155,9 +125,8 @@ export function Frame({ children, title, bare = false }: { children: ReactNode; 
         ) : (
           <>
             <BackgroundWaves />
-            <StatusBar title={title} />
+            <StatusBar title={title} home={home} />
             <div className="app-enter relative z-10">{children}</div>
-            <Dock />
           </>
         )}
       </div>
