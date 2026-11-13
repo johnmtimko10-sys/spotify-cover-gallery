@@ -39,12 +39,12 @@ function ZoomView({ onBack, onCover }: { onBack: () => void; onCover: () => void
     <Frame bare>
       <CoverBackdrop src={track.cover} />
       <BackButton onClick={onBack} label="Back to Spotify" />
-      <div className="relative flex h-full items-center justify-center gap-[7cqw]">
+      <div className="relative flex h-full flex-col items-center justify-center gap-[2.4cqw]">
         <button
           type="button"
           onClick={onCover}
           aria-label="Show album cover only"
-          className="relative aspect-square h-[44cqw] shrink-0 transition-transform hover:scale-[1.01] active:scale-[0.99]"
+          className="relative aspect-square h-[40cqw] shrink-0 transition-transform hover:scale-[1.01] active:scale-[0.99]"
         >
           <img
             key={track.cover}
@@ -55,20 +55,20 @@ function ZoomView({ onBack, onCover }: { onBack: () => void; onCover: () => void
             className="cover-in h-full w-full rounded-[2.4cqw] border border-border object-cover shadow-2xl"
           />
         </button>
-        <div className="flex items-center gap-[4cqw] text-foreground">
+        <div className="flex items-center gap-[5cqw] text-foreground">
           <button type="button" onClick={player.prev} aria-label="Previous track" className="p-[1cqw] transition-transform active:scale-90">
-            <PrevIcon className="w-[6cqw]" />
+            <PrevIcon className="w-[4cqw]" />
           </button>
           <button
             type="button"
             onClick={player.toggle}
             aria-label={player.playing ? "Pause" : "Play"}
-            className="play-button grid size-[13cqw] place-items-center rounded-full bg-spotify text-spotify-foreground transition-transform hover:scale-105 active:scale-95"
+            className="play-button grid size-[9cqw] place-items-center rounded-full bg-spotify text-spotify-foreground transition-transform hover:scale-105 active:scale-95"
           >
-            <PlayPauseIcon playing={player.playing} className={`w-[5cqw] ${player.playing ? "" : "translate-x-[0.4cqw]"}`} />
+            <PlayPauseIcon playing={player.playing} className={`w-[3.4cqw] ${player.playing ? "" : "translate-x-[0.3cqw]"}`} />
           </button>
           <button type="button" onClick={player.next} aria-label="Next track" className="p-[1cqw] transition-transform active:scale-90">
-            <NextIcon className="w-[6cqw]" />
+            <NextIcon className="w-[4cqw]" />
           </button>
         </div>
       </div>
