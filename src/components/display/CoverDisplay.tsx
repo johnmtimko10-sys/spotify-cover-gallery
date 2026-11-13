@@ -161,7 +161,7 @@ export function CoverDisplay() {
   const [playing, setPlaying] = useState(true);
   const [trackIdx, setTrackIdx] = useState(0);
   const [elapsed, setElapsed] = useState(48);
-  const track = TRACKS[trackIdx];
+  const track = TRACKS[trackIdx] ?? TRACKS[0]!;
 
   useEffect(() => {
     if (!playing) return;
