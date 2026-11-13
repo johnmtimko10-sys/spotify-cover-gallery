@@ -32,7 +32,7 @@ function GlowSlider({
       max={max}
       min={min}
       step={1}
-      disabled={disabled}
+      disabled={disabled ?? false}
       className="relative flex h-[4.4cqw] w-full touch-none select-none items-center data-[disabled]:opacity-40"
     >
       <SliderPrimitive.Track

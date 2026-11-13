@@ -13,7 +13,7 @@ function useClock() {
   return now;
 }
 
-function StatusBar({ title }: { title?: string }) {
+function StatusBar({ title }: { title?: string | undefined }) {
   const now = useClock();
   const time = now ? now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "7:42 PM";
   const date = now
